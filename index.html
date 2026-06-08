@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sistem Logistik Angkutan Barang v7</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { temaHijau: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534' } } } }
+    }
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans pb-10">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row sm:justify-between sm:items-center py-3 sm:py-0 sm:h-16 gap-3">
+      <div class="flex items-center space-x-2">
+        <div class="bg-temaHijau-600 text-white p-2 rounded-lg shadow-md flex-shrink-0">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
+        </div>
+        <span class="font-bold text-lg sm:text-xl text-gray-800 tracking-tight">LogistikKito</span>
+      </div>
+      <nav class="flex space-x-1 bg-gray-100 p-1.5 rounded-xl w-full sm:w-auto">
+        <button id="btnTabInput" onclick="switchTab('input')" class="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-sm font-bold rounded-lg transition duration-150 bg-white text-temaHijau-700 shadow-sm">Input Barang</button>
+        <button id="btnTabList" onclick="switchTab('list')" class="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-sm font-medium rounded-lg transition duration-150 text-gray-600 hover:text-gray-900">Daftar Muatan</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-6 sm:py-8">
+    
+    <!-- Tab Input -->
+    <section id="viewInput" class="block max-w-lg mx-auto">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-8">
+        <div class="mb-6">
+          <h2 id="formTitle" class="text-xl sm:text-2xl font-bold text-gray-800">Catat Barang Bawaan</h2>
+          <p id="formDesc" class="text-xs sm:text-sm text-gray-500 mt-1.5 leading-relaxed">Ketik barang dipisahkan dengan koma ( , ) atau enter. Sistem akan mengaturnya menjadi list yang rapi.</p>
+        </div>
+        <form id="formBarang" class="space-y-4 sm:space-y-5">
+          <input type="hidden" name="id" id="itemId">
+          <input type="hidden" name="action" id="itemAction" value="create">
+          
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Pemilik / Anak</label>
+            <select name="nama_anak" id="namaAnakSelect" required class="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-temaHijau-500 focus:border-temaHijau-500 outline-none transition bg-white text-gray-700 text-sm sm:text-base appearance-none">
+              <option value="" disabled selected>-- Pilih Nama --</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Daftar Barang Bawaan (Gunakan Koma, Contoh: Buku, Kertas, Pulpen, Kipas)</label>
+            <textarea name="nama_barang" id="namaBarang" rows="5" placeholder="Misal: Kasur Lipat, Kipas Angin, Kardus Buku, Koper" required class="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-temaHijau-500 focus:border-temaHijau-500 outline-none transition text-gray-700 text-sm sm:text-base whitespace-pre-wrap"></textarea>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Catatan Tambahan (Opsional)</label>
+            <textarea name="catatan" id="catatanBarang" rows="2" placeholder="Misal: Jemput di kos lantai 2" class="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-temaHijau-500 focus:border-temaHijau-500 outline-none transition text-gray-700 text-sm sm:text-base"></textarea>
+          </div>
+          
+          <button type="button" id="btnBatalEdit" onclick="resetToCreateMode()" class="hidden w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3.5 sm:py-2.5 rounded-xl transition text-sm mb-2">Batal Ubah Data</button>
+          <button type="submit" id="btnSubmit" class="w-full bg-temaHijau-600 hover:bg-temaHijau-700 text-white font-bold py-3.5 sm:py-3 rounded-xl shadow-md transition duration-200 transform active:scale-[0.98] text-sm sm:text-base">Simpan ke Daftar</button>
+        </form>
+        <div id="notifStatus" class="hidden mt-4 p-4 rounded-xl text-sm font-medium text-center"></div>
+      </div>
+    </section>
+
+    <!-- Tab List -->
+    <section id="viewList" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800">Semua Daftar Muatan</h2>
+            <p class="text-xs sm:text-sm text-gray-500 mt-1 leading-relaxed">Rangkuman logistik seluruh anak kelompok.</p>
+          </div>
+          <div class="relative w-full sm:w-64">
+            <input type="text" id="inputCari" oninput="filterTabel()" placeholder="Cari nama / barang..." class="w-full px-4 py-3 sm:py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-temaHijau-500 focus:border-temaHijau-500 outline-none text-sm transition">
+          </div>
+        </div>
+
+        <div id="loadingState" class="py-12 flex flex-col items-center justify-center space-y-3">
+          <div class="animate-spin rounded-full h-8 w-8 border-4 border-temaHijau-100 border-t-temaHijau-600"></div>
+          <p class="text-sm text-gray-500 font-medium">Memuat data...</p>
+        </div>
+
+        <div id="tableWrapper" class="hidden">
+          <table class="w-full text-left border-collapse block sm:table">
+            <thead class="hidden sm:table-header-group">
+              <tr class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider border-b border-gray-100">
+                <th class="py-4 px-6 font-semibold w-1/4">Nama Anak</th>
+                <th class="py-4 px-6 font-semibold w-2/5">Daftar Barang Bawaan</th>
+                <th class="py-4 px-6 font-semibold w-1/4">Catatan</th>
+                <th class="py-4 px-6 font-semibold text-center w-20">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tabelBody" class="block sm:table-row-group text-sm text-gray-700"></tbody>
+          </table>
+          <div id="pesanKosong" class="hidden text-center py-12 text-gray-400">Belum ada data barang.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // URL Web App
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxCsV8Vvq1UN0uDYYsbIFVauofyWUNMezLVYBrnGvgvfidQqEyiVA4-GhyBSOt9dViAPQ/exec';
+    let listBarangLokal = [];
+
+    const daftarNamaAnak = [
+      "Gema Aulia", "Chatarina Grashella Kurniawati", "Fajar Rozaqul Akbar", "Cahaya Brillian Arsyanuna", 
+      "Marsya Aan Aristin", "Nafika Wahyu Ariyanti", "Nabilah Putri Chaniago", "Mukhammad Sugeng", 
+      "Adinda Rizqiyatul Hasanah", "Alifia Mecca Z", "Ratih Shouma Mirza", "Syahrul Fabian", 
+      "Daffania Thalita Maheswari", "Aryo Adi Bhaskoro", "Mucharommah Dewi Aminah", 
+      "Muhammad Zhafran Risantha Kamil", "Falensia Jesica Chrisnadie", "Diva Siska Amelia", 
+      "Annisa Nur Zahida", "Calista Etdhria Salsabila", "Muhammad Hilman Hakim", "Keynisya Pentania Sofyani", 
+      "Kholilatus Saadah", "Afifa Andriyani", "Satriyo Ilham", "Tegar Jatu Ramadhani", 
+      "Alfi Lailatul Zahro", "Zahwa Aurora", "Vania Eka Sebtiartha", "Sarah Luttfiyyah Azmi"
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderDropdownNama();
+      loadDataDariSheets(false); 
+    });
+
+    // Helper Pelindung XSS & Render String Aman
+    function escapeHTML(str) {
+      if (typeof str !== 'string') return '-';
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    function renderDropdownNama() {
+      const select = document.getElementById("namaAnakSelect");
+      daftarNamaAnak.sort().forEach(nama => {
+        const option = document.createElement("option");
+        option.value = nama; option.textContent = nama; select.appendChild(option);
+      });
+    }
+
+    function switchTab(target) {
+      document.getElementById("viewInput").classList.toggle("hidden", target !== 'input');
+      document.getElementById("viewList").classList.toggle("hidden", target !== 'list');
+      
+      document.getElementById("btnTabInput").className = target === 'input' 
+        ? "flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-sm font-bold rounded-lg bg-white text-temaHijau-700 shadow-sm" 
+        : "flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900";
+        
+      document.getElementById("btnTabList").className = target === 'list' 
+        ? "flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-sm font-bold rounded-lg bg-white text-temaHijau-700 shadow-sm" 
+        : "flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-sm font-medium rounded-lg text-gray-600 hover:text-gray-900";
+        
+      if (target === 'list') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        loadDataDariSheets(true);
+      }
+    }
+
+    document.getElementById("formBarang").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const form = this;
+      
+      // REVISI: Regex dan logika format yang jauh lebih aman & robust
+      const textareaBarang = document.getElementById("namaBarang");
+      let isiInput = String(textareaBarang.value || "");
+      
+      // Pisahkan teks berdasarkan Koma (,) atau Enter (\n) atau Titik Koma (;)
+      let listItems = isiInput.split(/[\n,;]+/)
+        // Hapus spasi di awal/akhir, lalu hilangkan tanda strip (-) atau bullet point jika user sudah mengetiknya manual
+        .map(item => item.trim().replace(/^[-*•]\s*/, ''))
+        // Buang data kosong
+        .filter(item => item.length > 0);
+      
+      // Gabungkan kembali menjadi list strip ke bawah
+      textareaBarang.value = listItems.map(item => '- ' + item).join('\n');
+
+      const btnSubmit = document.getElementById("btnSubmit");
+      const textAwal = btnSubmit.textContent;
+      
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Memproses...";
+      btnSubmit.classList.add("opacity-70", "cursor-not-allowed");
+
+      fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+      .then(res => res.text()) // Ambil response sbg teks dulu untuk menghindari error JSON parsing
+      .then(text => {
+        let res;
+        try { res = JSON.parse(text); } catch (e) {
+          throw new Error("Gagal membaca respon server. Pastikan URL Web App benar.");
+        }
+        
+        if(res.status === 'success') {
+          tampilkanNotif(res.message, "success");
+          form.reset(); resetToCreateMode();
+          setTimeout(() => switchTab('list'), 1000);
+        } else {
+          tampilkanNotif("Gagal: " + res.message, "error");
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        tampilkanNotif("Data berhasil dikirim. Silakan cek tabel muatan.", "success");
+        form.reset(); resetToCreateMode();
+      })
+      .finally(() => {
+        btnSubmit.disabled = false; btnSubmit.textContent = textAwal;
+        btnSubmit.classList.remove("opacity-70", "cursor-not-allowed");
+      });
+    });
+
+    function loadDataDariSheets(showLoader = true) {
+      const loader = document.getElementById("loadingState");
+      const wrapper = document.getElementById("tableWrapper");
+
+      if (showLoader) { loader.classList.remove("hidden"); wrapper.classList.add("hidden"); }
+
+      fetch(scriptURL)
+        .then(res => res.text())
+        .then(text => {
+          let data;
+          try { data = JSON.parse(text); } catch (e) { throw new Error("Format data salah."); }
+          listBarangLokal = data;
+          renderTabel(listBarangLokal);
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById("loadingState").innerHTML = `<p class="text-sm text-red-500 font-semibold mt-4">Gagal memuat data. Cek koneksi internetmu.</p>`;
+        })
+        .finally(() => {
+          if(document.getElementById("loadingState").innerHTML.includes("Gagal")) return;
+          loader.classList.add("hidden"); wrapper.classList.remove("hidden");
+        });
+    }
+
+    function renderTabel(dataArray) {
+      const tbody = document.getElementById("tabelBody");
+      const pesanKosong = document.getElementById("pesanKosong");
+      tbody.innerHTML = "";
+
+      if(!dataArray || dataArray.length === 0) {
+        pesanKosong.classList.remove("hidden");
+        return;
+      }
+      pesanKosong.classList.add("hidden");
+
+      dataArray.forEach(item => {
+        // REVISI: Escape HTML supaya aman dari syntax error jika ada karakter aneh
+        const namaBarang = escapeHTML(item.nama_barang || "");
+        const namaAnak = escapeHTML(item.nama_anak || "");
+        const catatan = escapeHTML(item.catatan || "");
+        // Amankan ID (Konversi menjadi string pasti)
+        const safeId = escapeHTML(String(item.id));
+
+        const jumlahBaris = namaBarang.split('\n').length;
+        const butuhClamp = jumlahBaris > 5;
+
+        const tr = document.createElement("tr");
+        tr.className = "block sm:table-row bg-white sm:bg-transparent shadow-sm sm:shadow-none mb-4 sm:mb-0 rounded-xl sm:rounded-none border border-gray-100 sm:border-b sm:border-x-0 sm:border-t-0 p-4 sm:p-0 hover:bg-gray-50/80 transition duration-150 relative";
+        
+        tr.innerHTML = `
+          <td class="block sm:table-cell py-2 sm:py-4 sm:px-6 align-top">
+            <span class="block sm:hidden text-[10px] font-bold text-temaHijau-600 uppercase mb-0.5 tracking-wider">Nama Anak</span>
+            <span class="font-bold sm:font-semibold text-gray-900 text-base sm:text-sm">${namaAnak}</span>
+          </td>
+          <td class="block sm:table-cell py-2 sm:py-4 sm:px-6 align-top leading-relaxed border-t border-gray-50 sm:border-0 mt-2 sm:mt-0 pt-2 sm:pt-4">
+            <span class="block sm:hidden text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Daftar Barang Bawaan</span>
+            
+            <div id="content-${safeId}" class="${butuhClamp ? 'line-clamp-5' : ''} text-gray-700 font-medium whitespace-pre-line transition-all duration-300">
+              ${namaBarang || "-"}
+            </div>
+            
+            ${butuhClamp ? `
+              <button onclick="toggleLihatSemua('${safeId}')" id="btn-toggle-${safeId}" class="mt-2 text-xs font-bold text-temaHijau-600 hover:text-temaHijau-800 bg-temaHijau-50 hover:bg-temaHijau-100 px-2.5 py-1 rounded-md transition inline-flex items-center space-x-1">
+                <span>Lihat Semua</span>
+                <svg id="icon-${safeId}" class="w-3 h-3 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </button>
+            ` : ''}
+          </td>
+          <td class="block sm:table-cell py-2 sm:py-4 sm:px-6 align-top border-t border-gray-50 sm:border-0 mt-2 sm:mt-0 pt-2 sm:pt-4">
+            <span class="block sm:hidden text-[10px] font-bold text-gray-400 uppercase mb-1 tracking-wider">Catatan</span>
+            <span class="text-gray-500 text-sm italic block whitespace-pre-line">${catatan || "-"}</span>
+          </td>
+          <td class="block sm:table-cell py-3 sm:py-4 sm:px-6 align-top sm:text-center mt-3 sm:mt-0 bg-gray-50/50 sm:bg-transparent rounded-lg sm:rounded-none">
+            <button onclick="picuEditItem('${safeId}')" class="w-full sm:w-auto inline-flex items-center justify-center space-x-1 text-temaHijau-600 hover:text-temaHijau-800 bg-temaHijau-50 hover:bg-temaHijau-100 px-4 py-2 sm:px-3 sm:py-1.5 rounded-lg text-sm sm:text-xs font-bold transition">
+              <span>Ubah Data</span>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function toggleLihatSemua(id) {
+      const safeId = String(id);
+      const contentDiv = document.getElementById(`content-${safeId}`);
+      const btnToggle = document.getElementById(`btn-toggle-${safeId}`);
+      const icon = document.getElementById(`icon-${safeId}`);
+
+      if (!contentDiv) return;
+
+      if (contentDiv.classList.contains('line-clamp-5')) {
+        contentDiv.classList.remove('line-clamp-5');
+        btnToggle.firstElementChild.textContent = 'Sembunyikan';
+        icon.classList.add('rotate-180');
+      } else {
+        contentDiv.classList.add('line-clamp-5');
+        btnToggle.firstElementChild.textContent = 'Lihat Semua';
+        icon.classList.remove('rotate-180');
+        btnToggle.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function picuEditItem(id) {
+      // REVISI: Gunakan pembandingan String untuk menghindari error "undefined"
+      const item = listBarangLokal.find(i => String(i.id) === String(id));
+      if(!item) {
+        tampilkanNotif("Gagal menarik data. ID tidak valid.", "error");
+        return;
+      }
+
+      document.getElementById("itemId").value = item.id;
+      document.getElementById("itemAction").value = "update";
+      document.getElementById("namaAnakSelect").value = item.nama_anak || "";
+      document.getElementById("namaBarang").value = item.nama_barang || "";
+      document.getElementById("catatanBarang").value = item.catatan || "";
+
+      document.getElementById("formTitle").textContent = "Ubah List Barang";
+      document.getElementById("formDesc").textContent = "Memperbarui rangkuman muatan milik " + (item.nama_anak || "");
+      document.getElementById("btnSubmit").textContent = "Perbarui Data";
+      document.getElementById("btnSubmit").className = "w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3.5 sm:py-3 rounded-xl shadow-md transition transform active:scale-[0.98]";
+      document.getElementById("btnBatalEdit").classList.remove("hidden");
+
+      switchTab('input');
+    }
+
+    function resetToCreateMode() {
+      document.getElementById("itemId").value = "";
+      document.getElementById("itemAction").value = "create";
+      document.getElementById("formTitle").textContent = "Catat Barang Bawaan";
+      document.getElementById("formDesc").textContent = "Ketik barang dipisahkan dengan koma ( , ) atau enter. Sistem akan mengaturnya menjadi list yang rapi.";
+      document.getElementById("btnSubmit").textContent = "Simpan ke Daftar";
+      document.getElementById("btnSubmit").className = "w-full bg-temaHijau-600 hover:bg-temaHijau-700 text-white font-bold py-3.5 sm:py-3 rounded-xl shadow-md transition transform active:scale-[0.98]";
+      document.getElementById("btnBatalEdit").classList.add("hidden");
+    }
+
+    function filterTabel() {
+      const keyword = document.getElementById("inputCari").value.toLowerCase();
+      const hasilFilter = listBarangLokal.filter(item => {
+        const teksAnak = String(item.nama_anak || "").toLowerCase();
+        const teksBarang = String(item.nama_barang || "").toLowerCase();
+        return teksAnak.includes(keyword) || teksBarang.includes(keyword);
+      });
+      renderTabel(hasilFilter);
+    }
+
+    function tampilkanNotif(pesan, tipe) {
+      const notif = document.getElementById("notifStatus");
+      notif.textContent = pesan;
+      notif.className = "mt-4 p-4 rounded-xl text-sm font-bold text-center " + 
+        (tipe === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800");
+      notif.classList.remove("hidden");
+      setTimeout(() => notif.classList.add("hidden"), 4000);
+    }
+  </script>
+</body>
+</html>
