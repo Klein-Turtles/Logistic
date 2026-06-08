@@ -23,7 +23,7 @@
         <div class="bg-temaHijau-600 text-white p-2 rounded-lg shadow-md flex-shrink-0">
           <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path></svg>
         </div>
-        <span class="font-bold text-lg sm:text-xl text-gray-800 tracking-tight">LogistikKito</span>
+        <span class="font-bold text-lg sm:text-xl text-gray-800 tracking-tight">KKNGondanglegi</span>
       </div>
       <nav class="flex space-x-1 bg-gray-100 p-1.5 rounded-xl w-full sm:w-auto">
         <button id="btnTabInput" onclick="switchTab('input')" class="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-sm font-bold rounded-lg transition duration-150 bg-white text-temaHijau-700 shadow-sm">Input Barang</button>
@@ -46,7 +46,7 @@
           <input type="hidden" name="action" id="itemAction" value="create">
           
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Pemilik / Anak</label>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama </label>
             <select name="nama_anak" id="namaAnakSelect" required class="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-temaHijau-500 focus:border-temaHijau-500 outline-none transition bg-white text-gray-700 text-sm sm:text-base appearance-none">
               <option value="" disabled selected>-- Pilih Nama --</option>
             </select>
@@ -59,7 +59,7 @@
           
           <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1.5">Catatan Tambahan (Opsional)</label>
-            <textarea name="catatan" id="catatanBarang" rows="2" placeholder="Misal: Jemput di kos lantai 2" class="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-temaHijau-500 focus:border-temaHijau-500 outline-none transition text-gray-700 text-sm sm:text-base"></textarea>
+            <textarea name="catatan" id="catatanBarang" rows="2" placeholder="Misal: Kipas aku badannya copot" class="w-full px-4 py-3 sm:py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-temaHijau-500 focus:border-temaHijau-500 outline-none transition text-gray-700 text-sm sm:text-base"></textarea>
           </div>
           
           <button type="button" id="btnBatalEdit" onclick="resetToCreateMode()" class="hidden w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3.5 sm:py-2.5 rounded-xl transition text-sm mb-2">Batal Ubah Data</button>
